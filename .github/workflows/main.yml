@@ -1,4 +1,4 @@
-name: picacgPunch
+name: my
 
 on:
   push:
@@ -20,13 +20,18 @@ jobs:
     - name: Set Time
       run: sudo timedatectl set-timezone 'Asia/Shanghai'
 
-    - name: Install libssl
-      run: sudo apt-get update && sudo apt-get install -y libssl-dev
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libssl-dev libssl1.1
 
     - name: Set up .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '5.0.x'
+
+    - name: Check .NET installation
+      run: dotnet --version
 
     - name: Restore dependencies
       run: dotnet restore
