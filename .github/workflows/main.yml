@@ -1,0 +1,40 @@
+name: picacgPunch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**'
+      - '!.gitignore'
+      - '!README.md'
+  schedule:
+    - cron: '2 2 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set Time
+      run: sudo timedatectl set-timezone 'Asia/Shanghai'
+
+    - name: Install libssl
+      run: sudo apt-get update && sudo apt-get install -y libssl-dev
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '5.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release
+
+    - name: Run
+      env:
+        accounts: ${{secrets.ACCOUNTS}}
+      run: dotnet run -- ${accounts}
